@@ -6,11 +6,13 @@ const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 const PORT = 4000; // Middleware server runs on port 4000
+const api_key = process.env.API_KEY;
 
 const supabase = createClient(
   process.env.PUBLIC_SUPABASE_URL, // Supabase URL
   process.env.PUBLIC_SUPABASE_ANON_KEY // Supabase Anon Key
 );
+
 
 // Validate the target API base URL
 const apiBaseUrl = process.env.API_BASE_URL;
@@ -32,7 +34,7 @@ async function authenticateToken(req, res, next) {
     // Verify JWT Signature
     const secret = process.env.JWT_SECRET;
     const decoded = jwt.verify(token, secret); // Decoded payload should match { id: userId }
-    const api_key = process.env.API_KEY;
+
     console.log(decoded);
     // Check if token exists in Supabase
     const { data, error } = await supabase
