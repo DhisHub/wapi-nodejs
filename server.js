@@ -32,7 +32,7 @@ async function authenticateToken(req, res, next) {
     // Verify JWT Signature
     const secret = process.env.JWT_SECRET;
     const decoded = jwt.verify(token, secret); // Decoded payload should match { id: userId }
-
+    const api_key = process.env.API_KEY;
     console.log(decoded);
     // Check if token exists in Supabase
     const { data, error } = await supabase
@@ -60,6 +60,9 @@ async function authenticateToken(req, res, next) {
 // Proxy middleware to forward requests
 const apiProxy = createProxyMiddleware({
   target: apiBaseUrl, // Redirect to actual API server
+  headers : {
+    "X-Api-Key" : api_key
+  },
   changeOrigin: true,
   onProxyReq: (proxyReq, req, res) => {
     // Optionally modify the request before sending it to the API
