@@ -24,6 +24,23 @@ if (!apiBaseUrl) {
   throw new Error("API_BASE_URL is not defined in the environment variables.");
 }
 
+// CORS middleware for browser preflight and API access
+app.use((req, res, next) => {
+  const origin = req.headers.origin || "*";
+  res.header("Access-Control-Allow-Origin", origin);
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization,Content-Type,X-Api-Key,Accept,Origin"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 // Middleware to verify JWT Token
 async function authenticateToken(req, res, next) {
   try {
