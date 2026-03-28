@@ -69,6 +69,7 @@ const apiProxy = createProxyMiddleware({
   changeOrigin: true,
   onProxyReq: (proxyReq, req, res) => {
     proxyReq.setHeader("x-api-key", apiKey);
+    proxyReq.removeHeader("authorization");
   },
   onProxyRes: (proxyRes, req, res) => {
     // Optionally modify the response before sending it back to the client
