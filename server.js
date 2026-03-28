@@ -6,7 +6,11 @@ const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 const PORT = 4000; // Middleware server runs on port 4000
-const api_key = process.env.API_KEY;
+const apiKey = process.env.API_KEY;
+
+if (!apiKey) {
+  throw new Error("API_KEY is not defined in the environment variables.");
+}
 
 const supabase = createClient(
   process.env.PUBLIC_SUPABASE_URL, // Supabase URL
@@ -62,12 +66,9 @@ async function authenticateToken(req, res, next) {
 // Proxy middleware to forward requests
 const apiProxy = createProxyMiddleware({
   target: apiBaseUrl, // Redirect to actual API server
-  headers : {
-    "X-Api-Key" : api_key
-  },
   changeOrigin: true,
   onProxyReq: (proxyReq, req, res) => {
-    // Optionally modify the request before sending it to the API
+    proxyReq.setHeader("x-api-key", apiKey);
   },
   onProxyRes: (proxyRes, req, res) => {
     // Optionally modify the response before sending it back to the client
